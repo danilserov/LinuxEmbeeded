@@ -35,12 +35,12 @@ int main(int argc, char* argv[])
     );
 
     receiver theReceiver(argv[1]);
-    theReceiver.receive();
-
-    for (int i = 0; i < 100000; i++)
-    {
-      theSender.send("test"+ std::to_string(i));
-    }    
+    theReceiver.receive([&]
+      (std::string line) 
+      {
+        theSender.send(line);
+      });
+ 
 
     theSender.WaitForComplete();
   }

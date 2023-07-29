@@ -36,7 +36,7 @@ public:
   //  PS C : \Windows\system32 > $port.open()
   //  PS C : \Windows\system32 > $port.WriteLine("some string")
   //  PS C : \Windows\system32 > $port.WriteLine("some string1")
-  void receive()
+  void receive(std::function <void(std::string line)> func)
   {
     std::vector<char> buf(1024, 0);
     std::string line;
@@ -56,7 +56,7 @@ public:
           {
             if (buf[i] == '\n')
             {
-              lineReceived(line);
+              lineReceived(line, func);
               break;
             }
             line += buf[i];
@@ -71,20 +71,21 @@ public:
       if (std::chrono::system_clock::now() >= m_timePoint)
       {
         resetTimer();
-        lineReceived(line);
+        lineReceived(line, func);
       }
     }
   }
 
 private:
 
-  void lineReceived(std::string& line)
+  void lineReceived(std::string& line, std::function <void(std::string line)> func)
   { 
     if (line.empty())
     {
       return;
     }
     std::cout << "line received:" << line << std::endl;
+    func(line);
     line.clear();
     m_counter++;
   }
