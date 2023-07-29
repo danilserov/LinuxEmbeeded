@@ -3,6 +3,7 @@
 
 #include "ComUdpProxy.h"
 #include "Sender.h"
+#include "Receiver.h"
 #include <boost/lexical_cast.hpp>
 using namespace std;
 
@@ -27,18 +28,21 @@ int main(int argc, char* argv[])
     std::string broadcastAddr = 
       //"127.0.0.1";
       boost::asio::ip::address_v4::broadcast().to_string();
-    sender s(
+    sender theSender(
       io_service,
       boost::asio::ip::address::from_string(broadcastAddr),
       boost::lexical_cast<short>(argv[2])
     );
 
+    receiver theReceiver(argv[1]);
+    theReceiver.receive();
+
     for (int i = 0; i < 100000; i++)
     {
-      s.send("test"+ std::to_string(i));
+      theSender.send("test"+ std::to_string(i));
     }    
 
-    s.WaitForComplete();
+    theSender.WaitForComplete();
   }
   catch (std::exception& e)
   {

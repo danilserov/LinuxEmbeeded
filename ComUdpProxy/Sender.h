@@ -23,7 +23,6 @@ const int max_message_count = 10;
 
 class sender
 {
-
 private:
   boost::thread thread_;
   boost::mutex mutex_;
@@ -34,12 +33,14 @@ private:
   boost::asio::io_service& io_service_;
   std::string stringBuf_;
   bool stopRequest_;
+  boost::condition_variable m_condition;
+
 public:
   sender(
     boost::asio::io_service& io_service,
     const boost::asio::ip::address& multicast_address,
     short multicast_port
-  ) :
+  ):
     io_service_(io_service),
     endpoint_(multicast_address, multicast_port),
     socket_(io_service, endpoint_.protocol()),
@@ -80,19 +81,21 @@ public:
       boost::mutex::scoped_lock l(mutex_);
       deque_.push_back(message);
     }
+    m_condition.notify_all();
   }
 
 private:
   void thread_Process()
   {
-    while (!stopRequest_)
+    while (stopRequest_ == false)
     {
       {
-        boost::mutex::scoped_lock l(mutex_);
+        boost::mutex::scoped_lock lock(mutex_);
 
         if (deque_.empty())
         {
-          return;
+          m_condition.timed_wait(lock, boost::posix_time::seconds(1));
+          continue;
         }
         stringBuf_ = deque_.front();
         deque_.pop_front();
