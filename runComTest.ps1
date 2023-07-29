@@ -1,0 +1,13 @@
+$port = new-Object System.IO.Ports.SerialPort COM5, 8000, None, 8, one
+$port.open()
+$port.WriteLine("some string0")
+$port.WriteLine("some string1")
+$port.WriteLine("some string2")
+$port.WriteLine("some string3")
+$port.WriteLine("some string4")
+$port.WriteLine("some string5")
+$port.WriteLine("some string6")
+$port.WriteLine("some string7")
+$port.WriteLine("some string8")
+$port.WriteLine("some string9")
+$port.close()

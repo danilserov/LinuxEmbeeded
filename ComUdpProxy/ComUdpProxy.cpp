@@ -35,13 +35,12 @@ int main(int argc, char* argv[])
       boost::lexical_cast<short>(argv[2])
     );
 
-    receiver theReceiver(argv[1]);
-    theReceiver.receive([&]
-    (std::string line)
-      {
-        Message m(line);
-        theSender.send(m.encrypt());
-      });
+    auto theReceiver = receiver(10, argv[1]);
+    while (theReceiver)
+    {
+      Message m(theReceiver());
+      theSender.send(m.encrypt());
+    }
 
     //for (int i = 0; i < 200000; i++)
     //{
