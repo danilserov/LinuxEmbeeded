@@ -24,13 +24,21 @@ int main(int argc, char* argv[])
     }
 
     boost::asio::io_service io_service;
-    std::string broadcastAddr = boost::asio::ip::address_v4::broadcast().to_string();
+    std::string broadcastAddr = 
+      //"127.0.0.1";
+      boost::asio::ip::address_v4::broadcast().to_string();
     sender s(
       io_service,
       boost::asio::ip::address::from_string(broadcastAddr),
       boost::lexical_cast<short>(argv[2])
     );
-    io_service.run();
+
+    for (int i = 0; i < 100000; i++)
+    {
+      s.send("test"+ std::to_string(i));
+    }    
+
+    s.WaitForComplete();
   }
   catch (std::exception& e)
   {

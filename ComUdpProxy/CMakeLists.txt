@@ -40,11 +40,12 @@ include_directories (SYSTEM ${Boost_INCLUDE_DIR})
 message(STATUS "Boost version: ${Boost_VERSION}")
 
 # Add source to this project's executable.
-add_executable (ComUdpProxy "ComUdpProxy.cpp" "ComUdpProxy.h" "Sender.h" )
+add_executable (ComUdpProxy "ComUdpProxy.cpp" "ComUdpProxy.h" "Sender.h"  "Receiver.h")
 
 
 target_link_libraries(ComUdpProxy
   PUBLIC Boost::filesystem
+  Boost::thread
   Boost::program_options
 )
 
