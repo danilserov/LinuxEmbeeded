@@ -8,7 +8,8 @@
       "projectTarget": "ComUdpProxy.exe (ComUdpProxy\\ComUdpProxy.exe)",
       "name": "ComUdpProxy.exe (With params)",
       "args": [
-        "COM1", "555518"
+        "COM1",
+        "30001"
       ]
     }
   ]
