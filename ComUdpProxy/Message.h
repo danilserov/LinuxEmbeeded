@@ -16,9 +16,9 @@ public:
   {
     std::string retVal = { 'H','E','L','L','O' };
 
-    for (auto it = m_message.begin(); it != m_message.end(); it++)
+    for (auto it : m_message)
     {
-      retVal.push_back(*it + 1);
+      retVal.push_back(it + 1);
     }
 
     return retVal;
