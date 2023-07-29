@@ -18,7 +18,7 @@
 #include <boost/asio.hpp>
 #include "boost/bind.hpp"
 #include "boost/date_time/posix_time/posix_time_types.hpp"
-
+#include "Message.h"
 
 class sender
 {
@@ -32,7 +32,6 @@ private:
   boost::asio::io_service& m_io_service;
   bool m_stopRequest;
   boost::condition_variable m_condition;
-  int m_counter;
 
 public:
   sender(
@@ -44,7 +43,6 @@ public:
     m_endpoint(multicast_address, multicast_port),
     m_socket(io_service, m_endpoint.protocol())
   {
-    m_counter = 0;
     m_stopRequest = false;
     m_socket.set_option(boost::asio::socket_base::broadcast(true));
     m_thread = boost::thread([this] { this->thread_Process(); });
@@ -70,7 +68,7 @@ public:
       boost::this_thread::sleep(boost::posix_time::milliseconds(1));
     }
     m_stopRequest = true;
-    m_thread.interrupt();
+   // m_thread.interrupt();
     m_thread.join();
   }
 
@@ -100,11 +98,14 @@ private:
         buf = m_deque.front();
         m_deque.pop_front();
       }
-
+      Message m(buf);
+      const std::string& bufToSend = m.encrypt();
       m_socket.send_to(
-        boost::asio::buffer(buf),
+        boost::asio::buffer(bufToSend),
         m_endpoint
       );
+
+      //std::cout << "sent to udp:" << bufToSend << std::endl;
     }
   }
 };

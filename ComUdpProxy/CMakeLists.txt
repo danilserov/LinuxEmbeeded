@@ -32,10 +32,12 @@ FetchContent_MakeAvailable(Boost)
 # Add source to this project's executable.
 add_executable (ComUdpProxy "ComUdpProxy.cpp" "ComUdpProxy.h" "Sender.h"  "Receiver.h" "Message.h")
 
-target_include_directories(ComUdpProxy PRIVATE ${BOOST_LIBRARY_INCLUDES})
+#target_include_directories(ComUdpProxy PRIVATE ${BOOST_LIBRARY_INCLUDES})
 
 target_link_libraries(ComUdpProxy
-  PUBLIC Boost::filesystem
+  PRIVATE 
+  Boost::asio
+  Boost::filesystem
   Boost::thread
   Boost::program_options
 )

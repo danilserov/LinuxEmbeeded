@@ -4,7 +4,6 @@
 #include "ComUdpProxy.h"
 #include "Sender.h"
 #include "Receiver.h"
-#include "Message.h"
 #include <boost/lexical_cast.hpp>
 using namespace std;
 
@@ -37,9 +36,8 @@ int main(int argc, char* argv[])
 
     auto theReceiver = receiver(10, argv[1]);
     while (theReceiver)
-    {
-      Message m(theReceiver());
-      theSender.send(m.encrypt());
+    {      
+      theSender.send(theReceiver());
     }
 
     //for (int i = 0; i < 200000; i++)

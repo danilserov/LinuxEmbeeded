@@ -2,25 +2,31 @@
 
 #include<vector>
 #include<string>
-
+#include<string_view>
 class Message
 {
+private:
   std::string m_message;
-public:
-  Message(const std::string& str) :
-    m_message(str)
+  const char* HEADER = "HELLO";
+  constexpr std::size_t constexpr_strlen(const char* s)
   {
-
+    return std::char_traits<char>::length(s);
   }
-  std::string encrypt()
+public:
+  Message(const std::string& str)
   {
-    std::string retVal = { 'H','E','L','L','O' };
+    m_message = HEADER + str;
+  }
 
-    for (auto it : m_message)
+  const std::string& encrypt()
+  {
+    auto len = constexpr_strlen(HEADER);
+
+    for (auto it = m_message.begin() + len; it != m_message.end(); it++)
     {
-      retVal.push_back(it + 1);
+      (*it)++;
     }
 
-    return retVal;
+    return m_message;
   }
 };

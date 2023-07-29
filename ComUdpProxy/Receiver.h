@@ -119,9 +119,9 @@ Receiver<std::string>  receiver(int maxLines, std::string port)
   ) -> void  
     {
       if (!resLine.empty())
-      {
+      {        
+        std::cout << "line:" << lineCounter << " received:" << resLine << std::endl;  
         lineCounter++;
-        std::cout << "line:" << lineCounter << " received:" << resLine << std::endl;      
       }    
     };
 
@@ -153,9 +153,11 @@ Receiver<std::string>  receiver(int maxLines, std::string port)
     });
 
 
-    io.run_one_until(timePoint);
+    auto ioResult = io.run_one_until(timePoint);
 
-    if (std::chrono::system_clock::now() >= timePoint)
+    if (ioResult == 0
+      //std::chrono::system_clock::now() >= timePoint
+    )
     {
       if (!line.empty())
       {
@@ -166,8 +168,12 @@ Receiver<std::string>  receiver(int maxLines, std::string port)
 
     for (auto res : results)
     {
+      if (lineCounter >= maxLines)
+      {
+        break;
+      }
       lineReceived(res, lineCounter);
-      co_yield line;      
+      co_yield res;
     }
     resetTimer();
   }
