@@ -31,9 +31,9 @@ private:
   boost::asio::deadline_timer timer_;
   std::deque<std::string> deque_;
   boost::asio::io_service& io_service_;
-  std::string stringBuf_;
   bool stopRequest_;
   boost::condition_variable m_condition;
+  int m_counter;
 
 public:
   sender(
@@ -46,6 +46,7 @@ public:
     socket_(io_service, endpoint_.protocol()),
     timer_(io_service)
   {
+    m_counter = 0;
     stopRequest_ = false;
     socket_.set_option(boost::asio::socket_base::broadcast(true));    
     thread_ = boost::thread([this] { this->thread_Process(); });
@@ -64,7 +65,7 @@ public:
       {
         boost::mutex::scoped_lock l(mutex_);
 
-        if (deque_.empty() && stringBuf_.empty())
+        if (deque_.empty())
         {
           break;
         }
@@ -75,7 +76,7 @@ public:
     stopRequest_ = true;
   }
 
-  void send(const std::string& message)
+  void send(const std::string message)
   {
     {
       boost::mutex::scoped_lock l(mutex_);
@@ -89,6 +90,7 @@ private:
   {
     while (stopRequest_ == false)
     {
+      std::string buf;
       {
         boost::mutex::scoped_lock lock(mutex_);
 
@@ -97,25 +99,14 @@ private:
           m_condition.timed_wait(lock, boost::posix_time::seconds(1));
           continue;
         }
-        stringBuf_ = deque_.front();
+        buf = deque_.front();
         deque_.pop_front();
       }
 
-      socket_.async_send_to(
-        boost::asio::buffer(stringBuf_), endpoint_,
-        boost::bind(&sender::handle_send_to, this,
-          boost::asio::placeholders::error));
-
-      io_service_.run_one();
+      socket_.send_to(
+        boost::asio::buffer(buf),
+        endpoint_
+      );
     }
-  }
-
-  void handle_send_to(const boost::system::error_code& error)
-  {
-    if (!error)
-    {
-      std::cout << "sent:" << stringBuf_ << std::endl;
-    }
-    stringBuf_.clear();
   }
 };

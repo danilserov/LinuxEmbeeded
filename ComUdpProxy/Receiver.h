@@ -32,7 +32,7 @@ public:
   {
     m_serial.close();
   }
-  //  PS C : \Windows\system32 > $port = new - Object System.IO.Ports.SerialPort COM5, 8000, None, 8, one
+  //  PS C : \Windows\system32 > $port = new-Object System.IO.Ports.SerialPort COM5, 8000, None, 8, one
   //  PS C : \Windows\system32 > $port.open()
   //  PS C : \Windows\system32 > $port.WriteLine("some string")
   //  PS C : \Windows\system32 > $port.WriteLine("some string1")

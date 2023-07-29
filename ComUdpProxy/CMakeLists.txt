@@ -22,7 +22,7 @@ message(STATUS "Boost src directories: ${Boost_SOURCE_DIR}")
 include_directories(asio INTERFACE ${Boost_SOURCE_DIR}/libs/asio/include)
 
 # Add source to this project's executable.
-add_executable (ComUdpProxy "ComUdpProxy.cpp" "ComUdpProxy.h" "Sender.h"  "Receiver.h")
+add_executable (ComUdpProxy "ComUdpProxy.cpp" "ComUdpProxy.h" "Sender.h"  "Receiver.h" "Message.h")
 
 
 target_link_libraries(ComUdpProxy
