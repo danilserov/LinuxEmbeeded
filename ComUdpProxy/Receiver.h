@@ -10,12 +10,12 @@
 #include "boost/date_time/posix_time/posix_time_types.hpp"
 
 template <typename T>
-struct Generator
+struct Receiver
 {
-  // The class name 'Generator' is our choice and it is not required for coroutine
+  // The class name 'Receiver' is our choice and it is not required for coroutine
   // magic. Compiler recognizes coroutine by the presence of 'co_yield' keyword.
-  // You can use name 'MyGenerator' (or any other name) instead as long as you include
-  // nested struct promise_type with 'MyGenerator get_return_object()' method.
+  // You can use name 'MyReceiver' (or any other name) instead as long as you include
+  // nested struct promise_type with 'MyReceiver get_return_object()' method.
 
   struct promise_type;
   using handle_type = std::coroutine_handle<promise_type>;
@@ -25,9 +25,9 @@ struct Generator
     T value_;
     std::exception_ptr exception_;
 
-    Generator get_return_object()
+    Receiver get_return_object()
     {
-      return Generator(handle_type::from_promise(*this));
+      return Receiver(handle_type::from_promise(*this));
     }
     std::suspend_always initial_suspend() { return {}; }
     std::suspend_always final_suspend() noexcept { return {}; }
@@ -45,11 +45,11 @@ struct Generator
 
   handle_type h_;
 
-  Generator(handle_type h)
+  Receiver(handle_type h)
     : h_(h)
   {
   }
-  ~Generator() { h_.destroy(); }
+  ~Receiver() { h_.destroy(); }
   explicit operator bool()
   {
     fill(); // The only way to reliably find out whether or not we finished coroutine,
@@ -86,13 +86,14 @@ private:
 };
 
 /*
+Powershell.exe -File runComTest.ps1
 $port = new-Object System.IO.Ports.SerialPort COM5, 8000, None, 8, one
 $port.open()
 $port.WriteLine("some string")
 $port.WriteLine("some string1")
 */
 
-Generator<std::string>  receiver(int maxLines, std::string port)
+Receiver<std::string>  receiver(int maxLines, std::string port)
 {
   boost::asio::io_service io;
   boost::asio::serial_port serial(io, port);
@@ -115,14 +116,14 @@ Generator<std::string>  receiver(int maxLines, std::string port)
   auto lineReceived = [](
     std::string& resLine,
     int& lineCounter
-    ) -> void
-  {
-    if (!resLine.empty())
+  ) -> void  
     {
-      lineCounter++;
-      std::cout << "line:" << lineCounter << " received:" << resLine << std::endl;      
-    }    
-  };
+      if (!resLine.empty())
+      {
+        lineCounter++;
+        std::cout << "line:" << lineCounter << " received:" << resLine << std::endl;      
+      }    
+    };
 
   while (lineCounter < maxLines)
   {

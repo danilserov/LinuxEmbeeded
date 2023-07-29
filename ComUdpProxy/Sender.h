@@ -51,9 +51,7 @@ public:
   }
 
   virtual ~sender()
-  {
-    m_thread.interrupt();
-    m_thread.join();
+  {    
   }
 
   void WaitForComplete()
@@ -72,6 +70,8 @@ public:
       boost::this_thread::sleep(boost::posix_time::milliseconds(1));
     }
     m_stopRequest = true;
+    m_thread.interrupt();
+    m_thread.join();
   }
 
   void send(const std::string& message)

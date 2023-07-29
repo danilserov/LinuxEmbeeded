@@ -18,12 +18,21 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Boost)
 
-message(STATUS "Boost src directories: ${Boost_SOURCE_DIR}")
-include_directories(asio INTERFACE ${Boost_SOURCE_DIR}/libs/asio/include)
+#message(STATUS "Boost src directories: ${Boost_SOURCE_DIR}")
+
+#get_cmake_property(_variableNames VARIABLES)
+#list (SORT _variableNames)
+#foreach (_variableName ${_variableNames})
+#  message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
+
+#INCLUDE_DIRECTORIES(${BOOST_LIBRARY_INCLUDES})
+#include_directories(asio INTERFACE ${boost_asio_SOURCE_DIR}/include)
 
 # Add source to this project's executable.
 add_executable (ComUdpProxy "ComUdpProxy.cpp" "ComUdpProxy.h" "Sender.h"  "Receiver.h" "Message.h")
 
+target_include_directories(ComUdpProxy PRIVATE ${BOOST_LIBRARY_INCLUDES})
 
 target_link_libraries(ComUdpProxy
   PUBLIC Boost::filesystem
