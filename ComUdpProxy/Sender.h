@@ -19,6 +19,7 @@
 #include "boost/bind.hpp"
 #include "boost/date_time/posix_time/posix_time_types.hpp"
 
+
 class sender
 {
 private:
@@ -38,14 +39,14 @@ public:
     boost::asio::io_service& io_service,
     const boost::asio::ip::address& multicast_address,
     short multicast_port
-  ):
+  ) :
     m_io_service(io_service),
     m_endpoint(multicast_address, multicast_port),
     m_socket(io_service, m_endpoint.protocol())
   {
     m_counter = 0;
     m_stopRequest = false;
-    m_socket.set_option(boost::asio::socket_base::broadcast(true));    
+    m_socket.set_option(boost::asio::socket_base::broadcast(true));
     m_thread = boost::thread([this] { this->thread_Process(); });
   }
 
@@ -73,7 +74,7 @@ public:
     m_stopRequest = true;
   }
 
-  void send(const std::string message)
+  void send(const std::string& message)
   {
     {
       boost::mutex::scoped_lock l(m_mutex);

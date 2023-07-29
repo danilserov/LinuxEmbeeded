@@ -16,7 +16,7 @@ private:
   int m_counter;
   std::chrono::time_point<std::chrono::system_clock> m_timePoint;
 public:
-  receiver(std::string port):
+  receiver(std::string port) :
     m_port(port),
     m_serial(m_io, m_port),
     m_counter(0)
@@ -79,7 +79,7 @@ public:
 private:
 
   void lineReceived(std::string& line, std::function <void(std::string line)> func)
-  { 
+  {
     if (line.empty())
     {
       return;
@@ -93,5 +93,5 @@ private:
   void resetTimer()
   {
     m_timePoint = std::chrono::system_clock::now() + std::chrono::seconds(5);
-  }  
+  }
 };

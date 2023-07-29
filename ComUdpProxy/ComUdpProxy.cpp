@@ -10,12 +10,12 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	cout << "Hello ComUdpProxy" << endl;
+  cout << "Hello ComUdpProxy" << endl;
 
-	for (int i = 1; i < argc; i++)
-	{
-		cout << argv[i] << endl;
-	}
+  for (int i = 1; i < argc; i++)
+  {
+    cout << argv[i] << endl;
+  }
 
   try
   {
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     }
 
     boost::asio::io_service io_service;
-    std::string broadcastAddr = 
+    std::string broadcastAddr =
       //"127.0.0.1";
       boost::asio::ip::address_v4::broadcast().to_string();
     sender theSender(
@@ -37,13 +37,13 @@ int main(int argc, char* argv[])
 
     receiver theReceiver(argv[1]);
     theReceiver.receive([&]
-      (std::string line) 
+    (std::string line)
       {
         Message m(line);
         theSender.send(m.encrypt());
       });
- 
-    //for (int i = 0; i < 20; i++)
+
+    //for (int i = 0; i < 200000; i++)
     //{
     //  theSender.send("test 555 " + std::to_string(i));
     //}
@@ -55,5 +55,5 @@ int main(int argc, char* argv[])
     std::cerr << "Exception: " << e.what() << "\n";
   }
 
-	return 0;
+  return 0;
 }
