@@ -35,11 +35,13 @@ int main(int argc, char* argv[])
     );
 
     auto theReceiver = receiver(10, argv[1]);
+
     while (theReceiver)
     {      
       theSender.send(theReceiver());
     }
 
+    //udp load test
     //for (int i = 0; i < 200000; i++)
     //{
     //  theSender.send("test 555 " + std::to_string(i));

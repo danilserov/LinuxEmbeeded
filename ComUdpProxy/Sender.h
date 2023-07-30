@@ -32,7 +32,7 @@ private:
   boost::asio::io_service& m_io_service;
   bool m_stopRequest;
   boost::condition_variable m_condition;
-
+  boost::condition_variable m_queueEmptyCondition;
 public:
   sender(
     boost::asio::io_service& io_service,
@@ -49,11 +49,13 @@ public:
   }
 
   virtual ~sender()
-  {    
+  {   
+    
   }
 
   void WaitForComplete()
   {
+    // to be called in the very end when send is never used anymore.
     while (true)
     {
       {
@@ -64,8 +66,9 @@ public:
           break;
         }
       }
-
-      boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+      boost::mutex queueEmptyMutex;
+      boost::mutex::scoped_lock lock(queueEmptyMutex);
+      m_queueEmptyCondition.timed_wait(lock, boost::posix_time::seconds(1));
     }
     m_stopRequest = true;
    // m_thread.interrupt();
@@ -93,6 +96,7 @@ private:
         if (m_deque.empty())
         {
           m_condition.timed_wait(lock, boost::posix_time::seconds(1));
+          m_queueEmptyCondition.notify_all();
           continue;
         }
         buf = m_deque.front();
@@ -107,5 +111,6 @@ private:
 
       //std::cout << "sent to udp:" << bufToSend << std::endl;
     }
+    m_socket.close();
   }
 };

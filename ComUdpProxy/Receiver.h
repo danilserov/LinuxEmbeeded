@@ -100,7 +100,7 @@ Receiver<std::string>  receiver(int maxLines, std::string port)
   boost::asio::io_service io;
   boost::asio::serial_port serial(io, port);
   std::chrono::time_point<std::chrono::system_clock> timePoint;
-  // Configure basic serial port parameters: 8kBaud, 8N1
+
   serial.set_option(boost::asio::serial_port_base::baud_rate(BAUD_RATE));
   serial.set_option(boost::asio::serial_port_base::character_size(DATA_BITS /* data bits */));
   serial.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
